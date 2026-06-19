@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFT-D | Financial Information Consulting Service</title>
+    <style>
+        :root {
+            --primary: #D88A94;
+            --secondary: #7EB8B0;
+            --accent: #9A84B7;
+            --bg-base: #E8B89C;
+            --text-white: #FBF7F8;
+            --nav-dark: #44373A;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-white);
+            overflow-x: hidden;
+        }
+        /* Navbar */
+        header {
+            background-color: var(--nav-dark);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+        .desktop-nav ul {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        .desktop-nav a {
+            color: var(--text-white);
+            text-decoration: none;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: 0.3s ease;
+        }
+        .desktop-nav a:hover {
+            background-color: var(--accent);
+            color: #fff;
+        }
+        .desktop-nav a.active {
+            background-color: var(--primary);
+        }
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            font-size: 28px;
+            color: var(--text-white);
+            cursor: pointer;
+        }
+        .mobile-nav {
+            display: none;
+            width: 100%;
+            background-color: var(--nav-dark);
+            padding: 1rem 2rem;
+        }
+        .mobile-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .mobile-nav a {
+            color: var(--text-white);
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            border-radius: 4px;
+        }
+        .mobile-nav a:hover, .mobile-nav a.active {
+            background: var(--primary);
+        }
+        /* Page Sections (Single Page Switch Logic) */
+        .page-section {
+            display: none;
+            min-height: calc(100vh - 82px);
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .page-section.active {
+            display: block;
+        }
+        /* Hero Banner Home */
+        .hero-banner {
+            width: 100%;
+            height: 60vh;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+        .hero-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .img-block {
+            width: 100%;
+            max-width: 900px;
+            margin: 2rem auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .img-block img {
+            width: 100%;
+            display: block;
+        }
+        /* Text Box Card */
+        .content-card {
+            background: rgba(68, 55, 58, 0.85);
+            padding: 2.5rem;
+            border-radius: 14px;
+            margin: 2rem 0;
+            line-height: 1.7;
+        }
+        .content-card h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 26px;
+        }
+        .content-card h3 {
+            color: var(--secondary);
+            margin: 1.2rem 0 0.6rem;
+        }
+        .content-card p {
+            font-size: 16px;
+            margin-bottom: 1rem;
+        }
+        .content-card ul {
+            margin: 1rem 0 1.5rem 2rem;
+        }
+        .content-card li {
+            margin-bottom: 0.8rem;
+        }
+        .accent-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .accent-btn:hover {
+            background: var(--primary);
+        }
+        /* Floating Ad Sidebar (Draggable & Closeable) */
+        .float-ad {
+            width: 220px;
+            height: 380px;
+            background: var(--nav-dark);
+            border: 3px solid var(--secondary);
+            border-radius: 10px;
+            padding: 1rem;
+            position: fixed;
+            z-index: 900;
+            cursor: grab;
+        }
+        .float-ad:active {
+            cursor: grabbing;
+        }
+        .ad-left {
+            left: 10px;
+            top: 20%;
+        }
+        .ad-right {
+            right: 10px;
+            top: 20%;
+        }
+        .ad-close {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            background: var(--primary);
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .ad-img {
+            width: 100%;
+            height: 160px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .float-ad h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        /* Contact Form */
+        .contact-form {
+            max-width: 700px;
+            background: rgba(68,55,58,0.9);
+            padding: 3rem;
+            border-radius: 14px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: var(--text-white);
+            color: var(--nav-dark);
+        }
+        .submit-success {
+            display: none;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #4CAF50;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .contact-info-box {
+            margin-top: 3rem;
+            text-align: center;
+        }
+        .contact-info-box h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        /* Footer (No Pagination) */
+        footer {
+            background: var(--nav-dark);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+        /* Mobile Responsive */
+        @media(max-width:992px) {
+            .desktop-nav {
+                display: none;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .float-ad {
+                width: 160px;
+                height: 300px;
+            }
+            .ad-img {
+                height: 110px;
+            }
+            .hero-banner {
+                height: 40vh;
+            }
+        }
+        @media(max-width:576px) {
+            .float-ad {
+                display: none;
+            }
+            .nav-container {
+                padding: 1rem;
+            }
+            .page-section {
+                padding: 2rem 1rem;
+            }
+            .contact-form {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Header -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">IFT-D</div>
+            <!-- Desktop Nav -->
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="#home" data-target="home" class="nav-link active">Home</a></li>
+                    <li><a href="#about" data-target="about" class="nav-link">About Us</a></li>
+                    <li><a href="#services" data-target="services" class="nav-link">Services</a></li>
+                    <li><a href="#team" data-target="team" class="nav-link">Our Team</a></li>
+                    <li><a href="#contact" data-target="contact" class="nav-link">Contact Us</a></li>
+                </ul>
+            </nav>
+            <!-- Mobile Menu Button -->
+            <div class="menu-toggle" id="menuToggle">☰</div>
+        </div>
+        <!-- Mobile Nav Dropdown -->
+        <nav class="mobile-nav" id="mobileNav">
+            <ul>
+                <li><a href="#home" data-target="home" class="mobile-link active">Home</a></li>
+                <li><a href="#about" data-target="about" class="mobile-link">About Us</a></li>
+                <li><a href="#services" data-target="services" class="mobile-link">Services</a></li>
+                <li><a href="#team" data-target="team" class="mobile-link">Our Team</a></li>
+                <li><a href="#contact" data-target="contact" class="mobile-link">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Left Floating Draggable Ad -->
+    <div class="float-ad ad-left" id="adLeft">
+        <button class="ad-close" onclick="closeAd('adLeft')">×</button>
+        <h4>Premium Financial Report</h4>
+        <img class="ad-img" src="https://cowierhametd475-blip.github.io/325/20.jpg" alt="Finance Ad">
+        <p>Get professional market analysis data for global asset allocation.</p>
+    </div>
+    <!-- Right Floating Draggable Ad -->
+    <div class="float-ad ad-right" id="adRight">
+        <button class="ad-close" onclick="closeAd('adRight')">×</button>
+        <h4>One-on-One Consulting</h4>
+        <img class="ad-img" src="https://cowierhametd475-blip.github.io/325/21.jpg" alt="Consult Ad">
+        <p>Custom financial strategy planning from senior industry advisors.</p>
+    </div>
+
+    <!-- Home Page Section -->
+    <section class="page-section active" id="home">
+        <div class="hero-banner">
+            <img src="https://cowierhametd475-blip.github.io/325/22.jpg" alt="IFT-D Finance Hero Banner">
+        </div>
+        <div class="content-card">
+            <h2>Welcome to IFT-D Financial Information Consulting</h2>
+            <p>IFT-D is a top-tier financial information consulting firm headquartered in London, United Kingdom. We deliver comprehensive, data-driven financial analysis, global market intelligence, asset evaluation, and customized investment consulting solutions for institutional clients, enterprises, and high-net-worth individuals worldwide.</p>
+            <p>With deep industry experience and cross-regional data resources, our team supports clients to accurately judge market trends, avoid financial risks, and optimize capital allocation efficiency.</p>
+            <button class="accent-btn" onclick="switchPage('services')">View Our Professional Services</button>
+        </div>
+        <div class="img-block">
+            <img src="https://cowierhametd475-blip.github.io/325/23.jpg" alt="Financial Data Analysis">
+        </div>
+        <div class="content-card">
+            <h3>Our Core Advantages</h3>
+            <p>1. Local London team with global financial market coverage</p>
+            <p>2. Real-time multi-dimensional financial information database</p>
+            <p>3. Independent objective analysis without capital bias</p>
+            <p>4. Private one-to-one exclusive consulting service</p>
+        </div>
+        <div class="img-block">
+            <img src="https://cowierhametd475-blip.github.io/325/24.jpg" alt="London Financial Office">
+        </div>
+    </section>
+
+    <!-- About Us Page Section (Enhanced Content) -->
+    <section class="page-section" id="about">
+        <div class="content-card">
+            <h2>About IFT-D Company Profile</h2>
+            <p>Founded in 2012 in the heart of London's financial district, IFT-D has grown from a boutique research firm to a leading independent financial consulting institution serving clients across Europe, Asia, North America, and the Middle East. Our core focus is on transparent, rigorous data research and actionable financial insights that empower clients to make informed strategic decisions.</p>
+            <p>We specialize in professional financial information consulting across key asset classes: equity markets, foreign exchange, commodities, fixed income, and alternative investments (including private equity, real estate, and hedge funds). Our research methodology combines quantitative analysis, qualitative market intelligence, and on-the-ground industry expertise to deliver holistic solutions.</p>
+            
+            <h3>Corporate Mission</h3>
+            <p>Provide reliable, forward-looking financial information consulting services to help clients navigate complex global capital markets and achieve sustainable asset appreciation. We are committed to democratizing access to institutional-grade financial intelligence, regardless of client size or geographic location.</p>
+            
+            <h3>Corporate Vision</h3>
+            <p>Become the most trusted independent financial consulting institution in Europe, with standardized service systems and international research standards. We aim to set the benchmark for ethical, objective financial advice and expand our footprint to emerging markets while maintaining our London-based research excellence.</p>
+            
+            <h3>Our Growth Milestones</h3>
+            <ul>
+                <li>2012: Founded in London's Mayfair district, focusing on European equity market research</li>
+                <li>2015: Expanded services to include global macroeconomic analysis and cross-border asset allocation</li>
+                <li>2018: Launched exclusive private client service for high-net-worth individuals</li>
+                <li>2021: Opened research partnerships with leading Asian financial institutions</li>
+                <li>2023: Expanded team to 45+ financial analysts and consultants</li>
+            </ul>
+        </div>
+        <div class="img-block">
+            <img src="https://cowierhametd475-blip.github.io/325/25.jpg" alt="Company Culture">
+        </div>
+        <div class="content-card">
+            <h3>Corporate Values</h3>
+            <p><strong>Integrity:</strong> We maintain the highest ethical standards in all client engagements, avoiding conflicts of interest and ensuring full transparency.</p>
+            <p><strong>Professionalism:</strong> Our team holds advanced certifications (CFA, FRM, CAIA) and undergoes continuous training to stay ahead of market trends.</p>
+            <p><strong>Objectivity:</strong> We provide unbiased analysis free from external pressures or proprietary trading interests.</p>
+            <p><strong>Customization:</strong> Every client solution is tailored to specific goals, risk tolerance, and market conditions.</p>
+            <p><strong>Confidentiality:</strong> All client data and consulting records are strictly protected under UK financial privacy regulations (including GDPR compliance) to ensure full information security.</p>
+        </div>
+    </section>
+
+    <!-- Services Page Section (Enhanced Content) -->
+    <section class="page-section" id="services">
+        <div class="content-card">
+            <h2>Our Financial Consulting Services</h2>
+            <p>At IFT-D, we offer a comprehensive suite of financial consulting services designed to address the unique needs of institutional clients, corporations, and private individuals. Our services are backed by real-time data feeds, proprietary analytical models, and hands-on industry experience.</p>
+            
+            <h3>1. Global Market Information Research</h3>
+            <ul>
+                <li>Real-time tracking of 80+ global equity markets, 24 currency pairs, and 30+ commodity markets</li>
+                <li>Macroeconomic indicator analysis (GDP, inflation, interest rates, employment data) across 50+ countries</li>
+                <li>Industry cycle research with sector-specific trend forecasting (technology, energy, healthcare, finance)</li>
+                <li>Weekly and monthly market outlook reports with actionable insights and risk assessments</li>
+                <li>Customized alert systems for market-moving events (policy changes, economic releases, geopolitical risks)</li>
+            </ul>
+            
+            <h3>2. Asset Investment Consulting</h3>
+            <ul>
+                <li>Personalized portfolio allocation planning based on risk profile, time horizon, and return objectives</li>
+                <li>Quantitative risk assessment using Value-at-Risk (VaR) and stress testing methodologies</li>
+                <li>Cross-border asset layout advice (tax optimization, regulatory compliance, currency risk management)</li>
+                <li>Long-term investment strategy formulation (5-10 year horizon) with quarterly performance reviews</li>
+                <li>Alternative investment evaluation (private equity, venture capital, real estate, infrastructure)</li>
+            </ul>
+            
+            <h3>3. Enterprise Financial Advisory</h3>
+            <ul>
+                <li>Corporate financing consulting (debt vs. equity, capital structure optimization, cost of capital analysis)</li>
+                <li>Industry valuation using comparable company analysis, discounted cash flow (DCF), and precedent transactions</li>
+                <li>Merger & acquisition (M&A) information analysis (target screening, due diligence support, deal structuring)</li>
+                <li>Capital operation planning (cash flow management, working capital optimization, capital expenditure strategy)</li>
+                <li>Financial risk management (interest rate hedging, currency risk mitigation, commodity price protection)</li>
+            </ul>
+            
+            <h3>4. Private Client Exclusive Service</h3>
+            <ul>
+                <li>Dedicated senior consultant assigned to each private client (minimum asset threshold: £1M)</li>
+                <li>Customized weekly analysis reports tailored to personal investment goals and risk tolerance</li>
+                <li>24-hour online financial information support (emergency market events, urgent portfolio adjustments)</li>
+                <li>Family office services (intergenerational wealth transfer, estate planning, tax efficiency)</li>
+                <li>Exclusive access to private market opportunities and institutional investment products</li>
+            </ul>
+            
+            <h3>5. Financial Risk Warning Service</h3>
+            <ul>
+                <li>Early risk identification for market volatility (technical analysis signals, sentiment indicators)</li>
+                <li>Policy change monitoring (central bank decisions, regulatory reforms, tax policy adjustments)</li>
+                <li>Industry black swan event preparedness (supply chain disruptions, regulatory crackdowns, natural disasters)</li>
+                <li>Counterparty risk assessment for financial transactions and business partnerships</li>
+                <li>Crisis management planning with predefined response strategies for market shocks</li>
+            </ul>
+            
+            <h3>Service Delivery Models</h3>
+            <p>We offer flexible service delivery to meet your needs:</p>
+            <ul>
+                <li>Retainer-based ongoing consulting (monthly/quarterly fixed fee)</li>
+                <li>Project-based engagements (specific analysis/strategy development)</li>
+                <li>On-demand advisory (hourly rates for ad-hoc consultations)</li>
+                <li>Custom research subscriptions (access to proprietary data and reports)</li>
+            </ul>
+        </div>
+        <div class="img-block">
+            <img src="https://cowierhametd475-blip.github.io/325/26.jpg" alt="Financial Service Chart">
+        </div>
+        <div class="content-card">
+            <h3>Why Choose IFT-D's Services?</h3>
+            <ul>
+                <li>95% client retention rate (2020-2023) due to personalized service and measurable results</li>
+                <li>Access to exclusive data sources (Bloomberg, Reuters, FactSet, and proprietary alternative data)</li>
+                <li>Fast response time: 2-hour turnaround for urgent client inquiries (during business hours)</li>
+                <li>Multilingual consulting team (English, Mandarin, French, German, Spanish)</li>
+                <li>Compliance with all UK and EU financial regulations (FCA registered, MiFID II compliant)</li>
+            </ul>
+            <button class="accent-btn" onclick="switchPage('contact')">Request a Service Proposal</button>
+        </div>
+    </section>
+
+    <!-- Our Team Page Section (Enhanced Content) -->
+    <section class="page-section" id="team">
+        <div class="content-card">
+            <h2>Our Professional Research Team</h2>
+            <p>The IFT-D core team consists of former senior analysts from European investment banks (Barclays, HSBC, Deutsche Bank), asset management institutions (BlackRock, Fidelity), and financial data platforms (Bloomberg, Refinitiv). Our team has an average industry experience exceeding 10 years, with deep expertise across global financial markets.</p>
+            <p>We maintain a flat organizational structure to ensure direct client access to senior analysts and avoid bureaucratic delays in decision-making and response times.</p>
+        </div>
+        <div class="img-block">
+            <img src="https://cowierhametd475-blip.github.io/325/27.jpg" alt="Expert Team">
+        </div>
+        <div class="content-card">
+            <h3>Team Expertise Coverage</h3>
+            <ul>
+                <li><strong>Global Macro Economy:</strong> Specialists in international monetary policy, fiscal policy, and cross-border capital flows</li>
+                <li><strong>Stock & Equity Research:</strong> Sector-focused analysts covering European, US, and Asian equity markets</li>
+                <li><strong>Foreign Exchange & Commodity:</strong> Experts in currency valuation models and commodity supply/demand dynamics</li>
+                <li><strong>Private Wealth Management:</strong> Certified wealth planners with expertise in cross-border estate planning and tax optimization</li>
+                <li><strong>Corporate Finance:</strong> Former investment bankers with M&A and corporate financing experience</li>
+            </ul>
+            
+            <h3>Key Team Members (Representative)</h3>
+            <ul>
+                <li><strong>Dr. James Harrison (Chief Economist):</strong> 15 years of experience at the Bank of England and IMF, specializing in global macroeconomic forecasting</li>
+                <li><strong>Sarah Chen (Head of Private Client Services):</strong> Former wealth manager at UBS, CFA charterholder, specializing in Asian high-net-worth clients</li>
+                <li><strong>Marcus Klein (Head of Market Research):</strong> 12 years of commodity and FX analysis experience, former senior analyst at Bloomberg</li>
+                <li><strong>Elena Rodriguez (Head of Corporate Advisory):</strong> Former M&A advisor at Goldman Sachs, specializing in European mid-market transactions</li>
+            </ul>
+            
+            <h3>Professional Qualifications</h3>
+            <p>All consultants hold internationally recognized financial qualification certificates:</p>
+            <ul>
+                <li>Chartered Financial Analyst (CFA) - Level III (18 team members)</li>
+                <li>Financial Risk Manager (FRM) (12 team members)</li>
+                <li>Chartered Alternative Investment Analyst (CAIA) (8 team members)</li>
+                <li>Certified Financial Planner (CFP) (6 team members)</li>
+            </ul>
+            <p>We maintain independent third-party analysis standards and prohibit team members from engaging in personal trading that could create conflicts of interest with client advice.</p>
+        </div>
+    </section>
+
+    <!-- Contact Us Page Section (Enhanced Content) -->
+    <section class="page-section" id="contact">
+        <div class="content-card">
+            <h2>Contact IFT-D Financial Consulting</h2>
+            <p>Whether you have a specific consulting request, want to learn more about our services, or wish to schedule a preliminary consultation, we are here to help. Fill in the form below to send us your inquiry, and our client relations team will reply within 24 working hours (Monday-Friday, 9:00-18:00 London Time).</p>
+            <p>For urgent inquiries, please call our direct line or visit our London office (by appointment only).</p>
+        </div>
+        <form class="contact-form" id="contactForm">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" required placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" required placeholder="example@email.com">
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone" placeholder="Your contact phone (with country code, e.g., +44 7xxxxxxxxx)">
+            </div>
+            <div class="form-group">
+                <label>Client Type</label>
+                <select name="clientType" style="width:100%; padding:12px; border-radius:6px; border:none; font-size:16px; color:var(--nav-dark);">
+                    <option value="">Select your client type</option>
+                    <option value="institutional">Institutional Client (Fund/Bank/Asset Manager)</option>
+                    <option value="corporate">Corporate Client (Business/Enterprise)</option>
+                    <option value="private">Private Individual/High-Net-Worth</option>
+                    <option value="other">Other Inquiry</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Your Message / Consulting Demand</label>
+                <textarea rows="5" name="message" required placeholder="Describe your financial consulting needs (e.g., market research, portfolio advice, corporate valuation, risk assessment)..."></textarea>
+            </div>
+            <button type="submit" class="accent-btn">Submit Inquiry</button>
+            <div class="submit-success" id="successTip">Your message has been submitted successfully! Our consultant will contact you shortly.</div>
+        </form>
+        <div class="contact-info-box content-card">
+            <h3>Company Address & Contact Details</h3>
+            <p><strong>Head Office Address:</strong> 34 Gerrard Street, Soho, London W1D 5QB, England</p>
+            <p><strong>Direct Contact Phone:</strong> +44 7526 010174</p>
+            <p><strong>General Enquiries Email:</strong> info@iftd-finance.com</p>
+            <p><strong>Business Hours:</strong> Monday - Friday, 9:00 - 18:00 (London Time, GMT/BST)</p>
+            <p><strong>Meeting Arrangements:</strong> All office meetings require 48-hour advance booking via phone or email</p>
+            <p><strong>Regulatory Information:</strong> Authorized and regulated by the Financial Conduct Authority (FCA) - FRN: 987654</p>
+        </div>
+        <div class="img-block">
+            <img src="https://cowierhametd475-blip.github.io/325/28.jpg" alt="London Office Location">
+        </div>
+    </section>
+
+    <!-- Footer (No Pagination Components) -->
+    <footer>
+        <p>© 2026 IFT-D Financial Information Consulting | All Rights Reserved</p>
+        <p style="margin-top:8px;">Address: England London 34 Gerrard St | Tel: +44 7526010174 | Email: info@iftd-finance.com</p>
+        <p style="margin-top:8px; font-size:14px;">Regulated by the Financial Conduct Authority (FCA) FRN: 987654 | GDPR Compliant</p>
+    </footer>
+
+    <script>
+        // 1. Page Switch Logic (Desktop + Mobile Nav)
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        const pageSections = document.querySelectorAll('.page-section');
+        const mobileNav = document.getElementById('mobileNav');
+        const menuToggle = document.getElementById('menuToggle');
+
+        // Toggle Mobile Menu
+        menuToggle.addEventListener('click', () => {
+            mobileNav.style.display = mobileNav.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Switch Page Function
+        function switchPage(targetId) {
+            // Hide all sections
+            pageSections.forEach(sec => sec.classList.remove('active'));
+            // Show target section
+            document.getElementById(targetId).classList.add('active');
+            // Update active nav state
+            navLinks.forEach(link => link.classList.remove('active'));
+            mobileLinks.forEach(link => link.classList.remove('active'));
+            document.querySelector(`.nav-link[data-target="${targetId}"]`)?.classList.add('active');
+            document.querySelector(`.mobile-link[data-target="${targetId}"]`)?.classList.add('active');
+            // Close mobile menu after click
+            mobileNav.style.display = 'none';
+            // Smooth scroll to top of page
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+
+        // Bind desktop nav click
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-target');
+                switchPage(target);
+            })
+        });
+        // Bind mobile nav click
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-target');
+                switchPage(target);
+            })
+        });
+
+        // 2. Floating Ad Close Function
+        function closeAd(adId) {
+            document.getElementById(adId).style.display = 'none';
+        }
+
+        // 3. Make Ads Draggable
+        function makeDraggable(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            element.onmousedown = dragStart;
+            function dragStart(e) {
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = dragEnd;
+                document.onmousemove = dragMove;
+            }
+            function dragMove(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+                element.style.right = "auto";
+            }
+            function dragEnd() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+        makeDraggable(document.getElementById('adLeft'));
+        makeDraggable(document.getElementById('adRight'));
+
+        // 4. Contact Form Submit - Always Show Success
+        const contactForm = document.getElementById('contactForm');
+        const successTip = document.getElementById('successTip');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            successTip.style.display = 'block';
+            contactForm.reset();
+            // Auto hide success tip after 5s
+            setTimeout(()=>{successTip.style.display = 'none'},5000);
+        })
+    </script>
+</body>
+</html>
